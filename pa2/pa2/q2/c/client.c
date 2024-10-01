@@ -37,11 +37,11 @@ void* connect_server(void* arg) {
     char* message = "GET_TOP_CPU_PROCESSES";
     send(clientSocket, message, strlen(message), 0);
 
-    int bytes_received = recv(clientSocket, buff, 1024, 0);
-    if (bytes_received < 0) {
+    int rec = recv(clientSocket, buff, 1024, 0);
+    if (rec < 0) {
         printf("Error in receiving data in thread %lu\n", thread_id);
     } else {
-        buff[bytes_received] = '\0';
+        buff[rec] = '\0';
         printf("Thread ID: %lu - Response from server:\n%s\n", thread_id, buff);
     }
 

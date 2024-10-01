@@ -38,40 +38,38 @@ int fetch_proc_info(const char* pid, ProcDetails* proc_info) {
     return 0;
 }
 
-int comp_cpu_time(const void* a, const void* b) {
-    ProcDetails* proc_a = (ProcDetails*)a;
-    ProcDetails* proc_b = (ProcDetails*)b;
-    unsigned long total_a = proc_a->u_time + proc_a->k_time;
-    unsigned long total_b = proc_b->u_time + proc_b->k_time;
-    return total_b - total_a;
+int comp_cpu_time(const void* proc1, const void* proc2) {
+    return ((ProcDetails*)proc2)->u_time + ((ProcDetails*)proc2)->k_time -
+           (((ProcDetails*)proc1)->u_time + ((ProcDetails*)proc1)->k_time);
 }
 
-void get_top_two_procs(char* res) {
-    DIR* proc_dir = opendir("/proc");
-    if (!proc_dir) {
-        perror("Failed to open /proc directory");
-        strcpy(res, "Error retrieving process information");
-        return;
-    }
 
+void get_top_two_procs(char* res) {
     struct dirent* dir_entry;
     ProcDetails procs[1024];
-    int process_count = 0;
+    int proc_counter = 0;
+
+    DIR* proc_dir = opendir("/proc");
+    if (!proc_dir) {
+        perror("Failed to open proc dir");
+        strcpy(res, "Error retrieving proc info");
+        return;
+    }
 
     while ((dir_entry = readdir(proc_dir)) != NULL) {
         if (dir_entry->d_type == DT_DIR) {
             char* end_pointer;
             long pid = strtol(dir_entry->d_name, &end_pointer, 10);
             if (*end_pointer == '\0') {
-                if (fetch_proc_info(dir_entry->d_name, &procs[process_count]) == 0) {
-                    process_count++;
+                if (fetch_proc_info(dir_entry->d_name, &procs[proc_counter]) == 0) {
+                    proc_counter++;
                 }
             }
         }
     }
     closedir(proc_dir);
 
-    qsort(procs, process_count, sizeof(ProcDetails), comp_cpu_time);
+    qsort(procs, proc_counter, sizeof(ProcDetails), comp_cpu_time);
 
     snprintf(res, BUFF_SIZE, 
              "Process 1: %s (PID: %d), User Time: %lu, Kernel Time: %lu\n"
@@ -143,7 +141,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (listen(server_socket, 0) < 0) {
-            const char* busy_message = "Server is busy, please try again later.\n";
+            const char* busy_message = "Connection .\n";
             send(client_socket, busy_message, strlen(busy_message), 0);
             close(client_socket);
             continue;
