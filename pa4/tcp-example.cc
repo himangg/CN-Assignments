@@ -193,8 +193,8 @@ main (int argc, char *argv[])
     }
 
   
-  bandwidth = "10Mbps"
-  delay = "100ms"
+  bandwidth = "10Mbps";
+  delay = "100ms";
 
   NodeContainer n0n1;
   n0n1.Create (2);
@@ -211,8 +211,8 @@ main (int argc, char *argv[])
 
 
 
-  bandwidth = "7Mbps"
-  delay = "10ms"
+  bandwidth = "7Mbps";
+  delay = "10ms";
 
   NodeContainer n1n2;
   n1n2.Add (n0n1.Get (1));
