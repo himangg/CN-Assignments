@@ -171,10 +171,10 @@ main (int argc, char *argv[])
 {
 
   //change these parameters for different simulations
-  std::string tcp_variant = "TcpCubic";
+  std::string tcp_variant = "TcpNewReno";
   std::string bandwidth = "5Mbps";
   std::string delay = "5ms";
-  std::string queuesize = "10p";
+  std::string queuesize = "50p";
   double error_rate = 0.000001;
   
   int simulation_time = 10; //seconds
@@ -193,7 +193,8 @@ main (int argc, char *argv[])
     }
 
   
-  
+  bandwidth = "10Mbps"
+  delay = "100ms"
 
   NodeContainer n0n1;
   n0n1.Create (2);
@@ -208,6 +209,11 @@ main (int argc, char *argv[])
   NetDeviceContainer devices;
   devices = pointToPoint.Install (n0n1);
 
+
+
+  bandwidth = "7Mbps"
+  delay = "10ms"
+
   NodeContainer n1n2;
   n1n2.Add (n0n1.Get (1));
   n1n2.Create (1);
@@ -221,6 +227,9 @@ main (int argc, char *argv[])
               "MaxSize", StringValue (queuesize));
   NetDeviceContainer devices2;
   devices2= pointToPoint2.Install (n1n2);
+
+
+
 
   Ptr<RateErrorModel> em = CreateObject<RateErrorModel> ();
   em->SetAttribute ("ErrorRate", DoubleValue (error_rate));
